@@ -16,7 +16,7 @@ function get_firefox_window {
             startswith("firefox") or endswith("firefox")
           )
         )
-      ] | first | .id'
+      ] | sort_by(.last_focused_time) | reverse | first | .id'
 }
 
 function raise_window {
@@ -32,7 +32,7 @@ if WIN_ID="$(get_firefox_window)"; then
   raise_window "${WIN_ID}"
   firefox --new-tab "$@"
 else
-  nohup firefox --new-window "$@" > /dev/null 2>&1 &
+  nohup firefox --new-window --new-instance "$@" > /dev/null 2>&1 &
   sleep 0.5
   WIN_ID="$(get_firefox_window)"
   if [[ "${WIN_ID}" != "null" ]]; then
